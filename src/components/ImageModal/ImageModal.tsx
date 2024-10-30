@@ -1,3 +1,4 @@
+import { Images } from "../../types";
 import s from "./ImageModal.module.css";
 import Modal from "react-modal";
 
@@ -14,16 +15,21 @@ const customStyles = {
 	},
 };
 
-const ImageModal = ({ src, modalIsOpen, closeModal }) => {
+type ImageModalProps = {
+	image: Images | null;
+	onClose: () => void;
+};
+
+const ImageModal = ({ image, onClose }: ImageModalProps) => {
+	if (!image) return null;
 	return (
-		<Modal
-			isOpen={modalIsOpen}
-			onRequestClose={closeModal}
-			style={customStyles}
-			contentLabel="Example Modal"
-		>
+		<Modal isOpen={!!image} onRequestClose={onClose} style={customStyles}>
 			<div className={s.wrap}>
-				<img className={s.img} src={src} alt="" />
+				<img
+					className={s.img}
+					src={image.urls.regular}
+					alt={image.alt_description}
+				/>
 			</div>
 		</Modal>
 	);

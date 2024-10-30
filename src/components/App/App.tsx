@@ -8,24 +8,22 @@ import Loader from "../Loader/Loader";
 import toast, { Toaster } from "react-hot-toast";
 import ImageModal from "../ImageModal/ImageModal";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
+import { Images } from "../../types";
 
 const App = () => {
-	const [searchValue, setSearchValue] = useState("");
-	const [photos, setPhotos] = useState([]);
-	const [error, setError] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const [page, setPage] = useState(1);
-	const [modalIsOpen, setIsOpen] = useState(false);
-	const [modalData, setModalData] = useState("");
+	const [searchValue, setSearchValue] = useState<string>("");
+	const [photos, setPhotos] = useState<Images[]>([]);
+	const [error, setError] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [page, setPage] = useState<number>(1);
+	const [modalData, setModalData] = useState<Images | null>(null);
 
-	const onSubmit = (value) => {
-		if (value !== searchValue) {
-			setPage(1);
-			setPhotos([]);
-		}
+	const onSubmit = (value: string) => {
+		if (value == searchValue) return;
+		setPage(1);
+		setPhotos([]);
 		setSearchValue(value);
 	};
-	const notify = () => toast("Please fill out this field!");
 
 	useEffect(() => {
 		if (!searchValue) return;
@@ -35,7 +33,7 @@ const App = () => {
 				setError(false);
 				setIsLoading(true);
 				const data = await getPhotos(page, searchValue);
-				setPhotos((prev) => [...prev, ...data]);
+				setPhotos((prev) => [...prev, ...data.results]);
 			} catch {
 				setError(true);
 			} finally {
@@ -49,19 +47,19 @@ const App = () => {
 		setPage((prev) => prev + 1);
 	};
 
-	const getValueImage = (value) => {
-		setModalData(value);
-		setIsOpen(true);
+	const getValueImage = (image: Images) => {
+		setModalData(image);
 	};
 
-	function closeModal() {
-		setIsOpen(false);
-	}
+	const closeModal = () => {
+		setModalData(null);
+	};
 
 	return (
 		<>
-			<SearchBar onSubmit={onSubmit} notify={notify} />
-			{!searchValue && <Toaster />}
+			<Toaster position="top-right" reverseOrder={false} />
+			<SearchBar onSubmit={onSubmit} />
+
 			{photos.length > 0 && (
 				<ImageGallery photos={photos} getValueImage={getValueImage} />
 			)}
@@ -74,11 +72,7 @@ const App = () => {
 			{searchValue && !error && (
 				<LoadMoreBtn handleChangePage={handleChangePage} />
 			)}
-			<ImageModal
-				modalIsOpen={modalIsOpen}
-				closeModal={closeModal}
-				src={modalData}
-			/>
+			{modalData && <ImageModal image={modalData} onClose={closeModal} />}
 		</>
 	);
 };

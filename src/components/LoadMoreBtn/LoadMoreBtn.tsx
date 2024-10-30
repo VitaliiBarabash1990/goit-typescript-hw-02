@@ -1,4 +1,8 @@
-const LoadMoreBtn = ({ handleChangePage }) => {
+interface LoadMoreBtnProps {
+	handleChangePage: () => void;
+}
+
+const LoadMoreBtn = ({ handleChangePage }: LoadMoreBtnProps) => {
 	return <button onClick={handleChangePage}>Load more</button>;
 };
 
