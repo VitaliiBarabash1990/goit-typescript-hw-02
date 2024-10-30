@@ -1,6 +1,15 @@
 import s from "./ErrorMessage.module.css";
 
-const ErrorMessage = ({ children, textAlign = "", marginBottom = "0" }) => {
+interface ErrorMessageProps {
+	children: string;
+	textAlign?: string;
+	marginBottom?: string;
+}
+const ErrorMessage = ({
+	children,
+	textAlign = "",
+	marginBottom = "0",
+}: ErrorMessageProps) => {
 	return (
 		<p
 			className={[
